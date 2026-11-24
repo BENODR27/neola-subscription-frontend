@@ -16,13 +16,13 @@ On a Mac/Ubuntu shell, copy templates without replacing any existing configurati
 ```
 
 Edit both files before starting. Runtime values belong in `.env.container`;
-port, bind address, network and image belong in `.env.deploy`. Use literal
+port, bind address and image belong in `.env.deploy`. Use literal
 unquoted values in `.env.container`. Existing passwords, keys and instance IDs
 must be copied unchanged from the existing installation, not regenerated.
 Relevant runtime settings (placeholders must be replaced):
 
 ```dotenv
-CONTROL_UPSTREAM=http://control-api:7020
+CONTROL_UPSTREAM=http://192.168.1.50:5005
 ```
 
 Preserve all customized settings including JWT issuer/audience, subscription mode,
@@ -30,16 +30,17 @@ provider origins and signing configuration. Keep provider signing private keys o
 on the provider server. These generic local manifests do not replace the signed
 customer-policy Ubuntu release profiles.
 
-Create the shared Docker network once per host, or reuse it if already present:
+No shared Docker network setup is needed. Each package gets its own automatic
+Compose network and calls other packages through the host LAN IP and published
+ports 5001–5006. Replace every 192.168.1.50 in the runtime template with your
+actual host IP, including browser origins and database settings. On a Mac,
+`ipconfig getifaddr en0` usually shows the Wi-Fi IP; use Network settings if
+that interface is not active.
 
-```sh
-docker network create neola-platform
-```
-
-On different hosts, configure reachable private service DNS names/HTTPS origins
-instead of Docker service aliases. `host.docker.internal` addresses a Mac Docker
-host; Ubuntu databases should use their real private DNS name or a container
-attached to the shared network. No database is created by this manifest.
+Databases must already be reachable at the configured IP and DB_PORT. A database
+container reachable only on an old private Docker network must first be made
+reachable through a deliberately configured host endpoint; preserve its data and
+credentials. This manifest does not create databases or change their ports.
 
 ## Start this package only
 
@@ -52,12 +53,18 @@ docker compose --env-file .env.deploy -f compose.independent.yaml logs --tail=10
 
 Equivalent aliases: `npm run docker:config`, `npm run docker:up`,
 `npm run docker:logs`. `npm run docker:build` builds without starting containers.
-Default local endpoint: http://localhost:5006. `HTTP_PORT` changes this without
+Local endpoint (also reachable using your host IP): http://localhost:5006. `HTTP_PORT` changes this without
 changing the container's internal port. `BIND_ADDRESS=0.0.0.0` permits LAN access;
-keep APIs private and use HTTPS for production frontends.
+restrict API ports to trusted clients and use HTTPS for production frontends.
 
 After changing environment values, rerun `docker:up` to recreate this service.
 Frontend upstream changes take effect at container startup without an Angular rebuild.
 
 Never commit `.env.container`, `.env.deploy`, upload files, database backups or
 private keys. Do not delete volumes to fix configuration failures.
+
+For local Console HTTP testing, use its template's NODE_ENV=development and the
+actual host-IP origin on port 5006. Production requires HTTPS and production
+settings. Preserve existing subscription mode, JWT/encryption secrets and
+installation credentials. Do not use local profiles instead of signed customer
+release profiles.

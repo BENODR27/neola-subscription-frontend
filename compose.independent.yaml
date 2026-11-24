@@ -17,11 +17,4 @@ services:
       - path: .env.container
         format: raw
     ports:
-      - '${BIND_ADDRESS:-127.0.0.1}:${HTTP_PORT:-5006}:80'
-    networks:
-      platform:
-        aliases: [control-frontend]
-networks:
-  platform:
-    external: true
-    name: ${NEOLA_NETWORK:-neola-platform}
+      - '${BIND_ADDRESS:-0.0.0.0}:${HTTP_PORT:-5006}:80'
