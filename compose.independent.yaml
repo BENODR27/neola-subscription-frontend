@@ -1,0 +1,27 @@
+# Independently managed service. No databases, seeds or sibling build contexts.
+name: neola-subscription-frontend
+services:
+  control-frontend:
+    build:
+      context: .
+    image: ${IMAGE:-neola-subscription-frontend:local}
+    restart: unless-stopped
+    stop_grace_period: 30s
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1/health']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    env_file:
+      - path: .env.container
+        format: raw
+    ports:
+      - '${BIND_ADDRESS:-127.0.0.1}:${HTTP_PORT:-5006}:80'
+    networks:
+      platform:
+        aliases: [control-frontend]
+networks:
+  platform:
+    external: true
+    name: ${NEOLA_NETWORK:-neola-platform}

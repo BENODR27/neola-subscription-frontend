@@ -1,0 +1,5 @@
+# Subscription Console frontend
+
+This independently deployed console uses its own opaque HttpOnly cookie session, not ERP AuthService/JWT storage. Keep API paths and contracts in `src/app/control.facade.ts`; related feature templates and TypeScript stay together. Do not add localStorage authentication, frontend-only permission enforcement, mock API success, fake billing metrics or hardcoded ERP runtime menus. Preserve scoped server pagination, busy/error/empty states, accessible controls and 320px layouts. Run `npm run validate`; backend business workflow evidence comes from the API integration suite.
+
+ERP users, roles, company/factory scopes and account migration have no screens or facade methods in this console. Keep their UI only in ERP IAM. License permissions are commercial catalog definitions, not user assignments. Console staff and personal security apply only to independent console logins. Instance keys remain commercial deployment controls. Run npm test for the role-based navigation ownership contract.

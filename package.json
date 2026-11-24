@@ -1,0 +1,36 @@
+{
+  "name": "neola-subscription-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "ng serve --host 127.0.0.1 --port 4300 --proxy-config proxy.conf.json",
+    "build": "ng build",
+    "test": "node --experimental-strip-types --test tools/console-navigation.test.cjs",
+    "validate": "npm test && ng build",
+    "docker:config": "docker compose --env-file .env.deploy -f compose.independent.yaml config --quiet",
+    "docker:build": "docker compose --env-file .env.deploy -f compose.independent.yaml build",
+    "docker:up": "docker compose --env-file .env.deploy -f compose.independent.yaml up -d --build",
+    "docker:logs": "docker compose --env-file .env.deploy -f compose.independent.yaml logs --tail=100 -f"
+  },
+  "dependencies": {
+    "@angular/common": "22.2.4",
+    "@angular/compiler": "22.2.4",
+    "@angular/core": "22.2.4",
+    "@angular/forms": "22.2.4",
+    "@angular/platform-browser": "22.2.4",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "22.2.6",
+    "@angular/cli": "22.2.6",
+    "@angular/compiler-cli": "22.2.4",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "object-inspect": "1.13.4",
+    "ansi-styles": "6.2.3",
+    "zod": "4.3.6",
+    "sync-child-process": "1.0.2"
+  }
+}
